@@ -1,116 +1,94 @@
-# Фитнес-зал — выбор тарифа
+# Fitness Club Tariffs
 
-Лендинг выбора абонемента: таймер акции в шапке, карточки тарифов с ценой и скидкой, согласие с офертой и кнопка покупки.
+🇬🇧 **English** | [🇷🇺 Русский](README.ru.md)
 
-## Скриншоты
+[![CI](https://github.com/ramach05/fitness-tariffs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ramach05/fitness-tariffs/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-### Десктоп
+A gym membership landing page: a live promo countdown, tariff cards fetched
+from an API with the recommended plan pinned first, terms consent and a
+purchase flow. Next.js 15 (App Router), React 19, Tailwind CSS.
 
-<img src="screenshots/main-page-desktop.png" alt="Главная страница на десктопе — таймер, hero-блок, карточки тарифов, форма покупки и блок гарантии" width="700" />
+## Screens
 
-### Мобильная версия
+| Desktop | Mobile (timer warning, ≤ 30 s) | Mobile (timer expired) |
+| --- | --- | --- |
+| <img src="screenshots/main-page-desktop.png" alt="Desktop layout" width="360" /> | <img src="screenshots/main-page-mobile-timer-alert.png" alt="Mobile, timer in warning state" width="220" /> | <img src="screenshots/main-page-mobile-timer-done.png" alt="Mobile, timer expired" width="220" /> |
 
-**Таймер в режиме предупреждения (осталось ≤ 30 сек):**
+## Highlights
 
-<img src="screenshots/main-page-mobile-timer-alert.png" alt="Мобильный вид — таймер в режиме предупреждения (красный, мигание)" height="500" />
+- **Live countdown** — updates every second; switches to a red blinking state
+  at 30 s; on expiry discounts hide and cards show full prices only.
+- **Recommended plan first** — the `is_best` tariff renders as a hero card,
+  the rest in a responsive grid (1 / 2 / 3 columns).
+- **Discount badges** — percent off computed from `price` vs `full_price`,
+  shown with a struck-through original.
+- **Purchase gate** — buy is blocked until the recurring-payment terms
+  checkbox is ticked; the error clears on consent.
+- **Data from a real endpoint** — tariffs fetched at runtime, with loading
+  and error states.
 
-**После истечения таймера (полные цены):**
+## Features
 
-<img src="screenshots/main-page-mobile-timer-done.png" alt="Мобильный вид — таймер истёк, отображаются полные цены без скидки" height="500" />
+- Countdown header with promo state.
+- Clickable tariff cards; the selected one is highlighted; any plan can be
+  picked before purchase.
+- Terms-consent checkbox with validation.
+- "Choose 3+ months" info block and a 30-day money-back guarantee block.
+- Fully responsive (mobile-first), fonts via `next/font`.
 
-## Стек
+## Data
 
-- **Next.js 15** (App Router)
-- **React 19**
-- **TypeScript**
-- **Tailwind CSS**
+Tariffs are loaded from `https://t-core.fit-hub.pro/Test/GetTariffs` — an
+array of `{ id, period, price, full_price, is_best, text }`.
 
-## Требования
-
-- Node.js 18+
-- npm
-
-## Установка и запуск
-
-```bash
-npm install
-npm run dev
-```
-
-Откройте [http://localhost:3000](http://localhost:3000).
-
-## Скрипты
-
-| Команда             | Описание                      |
-| ------------------- | ----------------------------- |
-| `npm run dev`       | Режим разработки с hot reload |
-| `npm run build`     | Production-сборка             |
-| `npm start`         | Запуск собранного приложения  |
-| `npm run typecheck` | Проверка типов TypeScript     |
-
-## Функциональность приложения
-
-### Загрузка данных
-
-- При открытии страницы запрашивается список тарифов с API (`GetTariffs`). Пока идёт загрузка, показывается состояние «Загрузка тарифов…»; при ошибке — сообщение об ошибке.
-- После загрузки тарифы сортируются: рекомендуемый (`is_best`) выводится первым как главная карточка, остальные — сеткой из трёх карточек ниже. Выбранным по умолчанию становится рекомендуемый тариф.
-
-### Таймер акции
-
-- В шапке отображается обратный отсчёт (старт — 2:00). Таймер обновляется каждую секунду.
-- Пока таймер идёт: на карточках показываются скидочная цена, зачёркнутая полная цена и бейдж процента скидки.
-- Когда остаётся 30 секунд и меньше: цвет таймера меняется на красный и включается анимация мигания.
-- После истечения таймера: скидки скрываются, на карточках отображаются только полные цены без бейджей.
-
-### Выбор тарифа
-
-- Карточки кликабельны. Выбранная карточка выделяется жёлтой рамкой и тенью. Можно выбрать любой тариф перед нажатием «Купить».
-- Главная карточка (хит) имеет отдельное оформление (метка «хит!», другой layout на десктопе). Остальные три тарифа отображаются в адаптивной сетке (1 колонка на мобильных, 2 на sm, 3 на md+).
-
-### Оформление покупки
-
-- Блок с чекбоксом «Я согласен с офертой рекуррентных платежей и Политикой конфиденциальности». Ссылки ведут на оферту и политику (заглушки).
-- Кнопка «Купить»:
-  - Если чекбокс не отмечен и пользователь нажимает «Купить» — показывается ошибка валидации (красная обводка чекбокса), покупка не выполняется.
-  - Если чекбокс отмечен — ошибка сбрасывается; в коде доступны данные выбранного тарифа для отправки на бэкенд (интеграция не реализована).
-- Под кнопкой — мелкий текст об условиях списания и хранения реквизитов карты.
-
-### Дополнительные блоки
-
-- Информационный блок с призывом выбирать план на 3+ месяца («Следуя плану на 3 месяца и более…»).
-- Блок «Гарантия возврата 30 дней» с кратким описанием условия возврата средств.
-
-## Данные
-
-Тарифы запрашиваются с API: `https://t-core.fit-hub.pro/Test/GetTariffs`. Формат ответа — массив объектов с полями `id`, `period`, `price`, `full_price`, `is_best`, `text`.
-
-## Структура проекта
+## Structure
 
 ```
 ├── app/
-│   ├── layout.tsx    # Корневой layout, шрифты, метаданные
-│   ├── page.tsx      # Главная страница (таймер, тарифы, форма)
-│   └── globals.css   # Глобальные стили и утилиты (например, hero gradient)
+│   ├── layout.tsx    # Root layout, fonts, metadata
+│   ├── page.tsx      # Home page (timer, tariffs, purchase form)
+│   └── globals.css   # Global styles and utilities
 ├── components/
-│   ├── Header.tsx        # Шапка с таймером акции
-│   ├── TariffList.tsx    # Список тарифов (главная карточка + сетка)
-│   ├── TariffCard.tsx    # Карточка одного тарифа
-│   ├── CheckboxBlock.tsx # Согласие с офертой и политикой
-│   └── GuaranteeBlock.tsx# Блок гарантии возврата
+│   ├── Header.tsx          # Header with promo timer
+│   ├── TariffList.tsx      # Hero card + grid
+│   ├── TariffCard.tsx      # Single tariff card
+│   ├── CheckboxBlock.tsx   # Terms consent
+│   └── GuaranteeBlock.tsx  # Money-back block
 ├── lib/
-│   ├── types.ts   # Тип Tariff
+│   ├── types.ts   # Tariff type
 │   └── api.ts     # fetchTariffs()
-├── utils/
-│   └── price.ts   # formatPrice(), getDiscountPercent()
-├── public/
-│   └── images/    # Hero-изображения (hero-sm/md/lg.svg)
-├── tailwind.config.ts
-├── next.config.ts
-└── tsconfig.json
+└── utils/
+    └── price.ts   # formatPrice(), getDiscountPercent()
 ```
 
-## Особенности реализации
+## Implementation notes
 
-- Компоненты обёрнуты в `React.memo`; колбэки стабилизированы через `useCallback`, списки тарифов — через `useMemo`.
-- Компоненты и утилиты оформлены стрелочными функциями; типы и `useEffect` снабжены JSDoc/комментариями.
-- Адаптивная вёрстка: мобильные карточки в две колонки (цена | описание), десктоп — hero слева, контент справа.
+- Components are wrapped in `React.memo`; callbacks stabilized with
+  `useCallback`, the tariff list with `useMemo`.
+- Arrow-function components and utilities; types and effects documented with
+  JSDoc.
+- Responsive layout: mobile cards are two columns (price | description);
+  desktop is hero left, content right.
+
+## Quick start
+
+Requires Node.js 18+.
+
+```bash
+npm install
+npm run dev   # http://localhost:3000
+```
+
+| Script | Description |
+| --- | --- |
+| `npm run dev` | Dev server with hot reload |
+| `npm run build` | Production build |
+| `npm start` | Serve the production build |
+| `npm run typecheck` | TypeScript check |
+
+Requires Node.js 18+.
+
+## License
+
+MIT
